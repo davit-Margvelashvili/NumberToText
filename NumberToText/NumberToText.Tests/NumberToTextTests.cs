@@ -10,55 +10,47 @@ namespace NumberToText.Tests
         [TestMethod]
         public void OneDigitNumber()
         {
-            var expected = "ორი";
-            var actual = Convert(2);
+            Assert.AreEqual("ნული", Convert(0));
+            Assert.AreEqual("ერთი", Convert(1));
+            Assert.AreEqual("ორი", Convert(2));
 
-            Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]
         public void TwoDigitNumber()
         {
-            var expected = "ოცი";
-            var actual = Convert(20);
-
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual("ოცდათერთმეტი", Convert(31));
+            Assert.AreEqual("თერთმეტი", Convert(11));
+            Assert.AreEqual("ათი", Convert(10));
+            Assert.AreEqual("ოცი", Convert(20));
+            Assert.AreEqual("ოცდაერთი", Convert(21));
         }
 
         [TestMethod]
         public void ThreeDigitNumber()
         {
-            var expected = "ორას ოცდაერთი";
-            var actual = Convert(221);
-
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual("ორას ოცდაერთი", Convert(221));
+            Assert.AreEqual("ას ოცდათხუთმეტი", Convert(135));
+            Assert.AreEqual("ას ათი", Convert(110));
+            Assert.AreEqual("ცხრაას ორმოცდათხუთმეტი", Convert(955));
         }
 
         [TestMethod]
         public void FourDigitNumber()
         {
-            var expected = "ორი ათას სამას ორმოცდახუთი";
-            var actual = Convert(2345);
-
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual("ორი ათას სამას ორმოცდახუთი", Convert(2345));
         }
 
         [TestMethod]
         public void FiveDigitNumber()
         {
-            var expected = "ოცდაორი ათას სამას ორმოცდახუთი";
-            var actual = Convert(22345);
-
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual("ოცდაორი ათას სამას ორმოცდახუთი", Convert(22345));
         }
 
         [TestMethod]
         public void SixDigitNumber()
         {
-            var expected = "სამას ოცდაორი ათას სამას ორმოცდახუთი";
-            var actual = Convert(322345);
-
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual("სამას ოცდაორი ათას სამას ორმოცდახუთი", Convert(322345));
         }
     }
 }
