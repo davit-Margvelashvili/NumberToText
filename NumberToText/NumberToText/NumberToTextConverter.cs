@@ -34,7 +34,6 @@ namespace NumberToText
             [8] = "რვა",
             [9] = "ცხრა",
         };
-
         static readonly Dictionary<byte, string> tens = new Dictionary<byte, string>
         {
             [0] = "ათი",
@@ -48,7 +47,6 @@ namespace NumberToText
             [8] = "თვრამეტი",
             [9] = "ცხრამეტი",
         };
-
         static readonly Dictionary<byte, string> prefixTwenties = new Dictionary<byte, string>
         {
             [0] = "",
@@ -77,22 +75,34 @@ namespace NumberToText
              " მილიარდ ",
         };
 
-        public static string Convert(double number)
+
+        public static (string wholePart, string decimalPart)  Convert(double number)
         {
-            if (number == 0) return "ნული";
-
             var textNumber = $"{number:N}";
-            var groupSepartor = NumberFormatInfo.CurrentInfo.NumberGroupSeparator;
+
             var decimalSeparator = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
-
             var numberParts = textNumber.Split(new string[] { decimalSeparator }, StringSplitOptions.RemoveEmptyEntries);
-            var wholePart = numberParts[0];
-            var numberGroups = wholePart.Split(new string[] { groupSepartor }, StringSplitOptions.RemoveEmptyEntries);
 
-            return GroupsToText(numberGroups);
+            var wholePart = Convert(numberParts[0]);
+            var decimalPart = Convert(numberParts[1]);
+
+            return (wholePart, decimalPart);
+
         }
 
-        // TODO: გასატესტია
+        private static string Convert(string number)
+        {
+            if (number.All(d => d == '0')) return "ნული";
+
+            var groupSepartor = NumberFormatInfo.CurrentInfo.NumberGroupSeparator;
+
+            var numberGroups = number.Split(new string[] { groupSepartor }, StringSplitOptions.RemoveEmptyEntries);
+
+            return GroupsToText(numberGroups);
+
+        }
+
+
         public static string GroupsToText(string[] groups)
         {
             var numberNames = groups.Select(n => GroupToText(n)).ToArray();
