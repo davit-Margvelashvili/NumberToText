@@ -78,6 +78,11 @@ namespace NumberToText
 
         public static (string wholePart, string decimalPart)  Convert(double number)
         {
+            number = Math.Abs(number);
+
+            if (number > 999999999999)
+                throw new ArgumentOutOfRangeException(nameof(number), "Unable to convert. Number was too big");
+
             var textNumber = $"{number:N}";
 
             var decimalSeparator = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;

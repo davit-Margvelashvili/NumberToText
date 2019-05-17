@@ -8,6 +8,12 @@ namespace NumberToText.Tests
     public class NumberToTextTests
     {
         [TestMethod]
+        public void Overflow()
+        {
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => Convert(1000000000000));
+        }
+
+        [TestMethod]
         public void DecimalNumbers()
         {
             var (whole, @decimal) = Convert(1234.37);
