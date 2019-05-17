@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace NumberToText
     {
         static readonly Dictionary<byte, string> postfixOnes = new Dictionary<byte, string>
         {
-            [0] = "ნული",
+            [0] = "",
             [1] = "ერთი",
             [2] = "ორი",
             [3] = "სამი",
@@ -23,7 +24,6 @@ namespace NumberToText
         };
         static readonly Dictionary<byte, string> prefixOnes = new Dictionary<byte, string>
         {
-            [0] = "ნული",
             [1] = "ერთ",
             [2] = "ორ",
             [3] = "სამ",
@@ -34,6 +34,7 @@ namespace NumberToText
             [8] = "რვა",
             [9] = "ცხრა",
         };
+
         static readonly Dictionary<byte, string> tens = new Dictionary<byte, string>
         {
             [0] = "ათი",
@@ -47,6 +48,7 @@ namespace NumberToText
             [8] = "თვრამეტი",
             [9] = "ცხრამეტი",
         };
+
         static readonly Dictionary<byte, string> prefixTwenties = new Dictionary<byte, string>
         {
             [0] = "",
@@ -68,13 +70,56 @@ namespace NumberToText
             [8] = "ოთხმოცი",
             [9] = "ოთხმოცდაათი",
         };
+        static readonly string[] groupNames = new string[]
+        {
+             " ათას ",
+             " მილიონ ",
+             " მილიარდ ",
+        };
 
         public static string Convert(double number)
         {
-           return FirstGroupBuilder(number.ToString());
+            if (number == 0) return "ნული";
+
+            var textNumber = $"{number:N}";
+            var groupSepartor = NumberFormatInfo.CurrentInfo.NumberGroupSeparator;
+            var decimalSeparator = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
+
+            var numberParts = textNumber.Split(new string[] { decimalSeparator }, StringSplitOptions.RemoveEmptyEntries);
+            var wholePart = numberParts[0];
+            var numberGroups = wholePart.Split(new string[] { groupSepartor }, StringSplitOptions.RemoveEmptyEntries);
+
+            return GroupsToText(numberGroups);
         }
 
-        public static string FirstGroupBuilder(string number)
+        // TODO: გასატესტია
+        public static string GroupsToText(string[] groups)
+        {
+            var numberNames = groups.Select(n => GroupToText(n)).ToArray();
+
+            var builder = new StringBuilder();
+            for (int i = numberNames.Length - 1, j = 0; i >= 0; i--, j++)
+            {
+                builder.Insert(0, numberNames[i]);
+
+                if (j < numberNames.Length - 1)
+                {
+                    if (numberNames[i - 1] == "")
+                        continue;
+                    builder.Insert(0, groupNames[j]);
+                }
+            }
+            if (numberNames.Last() == "")
+            {
+                builder.Remove(builder.Length - 1, 1);
+                builder.Append("ი");
+            }
+
+            return builder.ToString();
+        }
+
+
+        public static string GroupToText(string number)
         {
             var (first, second, third) = GetDigitsFrom(number);
 
@@ -82,13 +127,25 @@ namespace NumberToText
             string ten = FindTen(second, third);
             string one = FindOne(first, second, third);
 
+            return BuildString(first, second, third, hundred, ten, one);
+        }
+
+        private static string BuildString(byte first, byte second, byte third, string hundred, string ten, string one)
+        {
             var builder = new StringBuilder();
             builder.Append(hundred == "ერთ" ? "" : hundred);
             builder.Append(hundred == "" ? "" : "ას ");
-            builder.Append(ten);
-            builder.Append(ten == "" ? "" : one == "ნული" ? "" : "და");
-            builder.Append(ten != "" && one == "ნული" ? "": one);
-
+            if (first > 0 && second == 0 && third == 0)
+            {
+                builder.Remove(builder.Length - 1, 1);
+                builder.Append("ი");
+            }
+            else
+            {
+                builder.Append(ten);
+                builder.Append(ten == "" ? "" : one == "" ? "" : "და");
+                builder.Append(ten != "" && one == "" ? "" : one);
+            }
             return builder.ToString();
         }
 
@@ -130,10 +187,10 @@ namespace NumberToText
             return second.IsOdd() ? prefixTwenties[(byte)(second - 1)] : prefixTwenties[second];
         }
 
-        private static string FindHundred(byte third)
+        private static string FindHundred(byte first)
         {
-            if (third == 0) return "";
-            return prefixOnes[third];
+            if (first == 0) return "";
+            return prefixOnes[first];
         }
 
         public static byte ToByte(this char digit)
