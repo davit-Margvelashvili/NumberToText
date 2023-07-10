@@ -7,7 +7,7 @@ namespace NumberToText.Core
     {
         #region Fields
 
-        private static readonly Dictionary<byte, string> postfixOnes = new Dictionary<byte, string>
+        private static readonly Dictionary<byte, string> PostfixOnes = new()
         {
             [0] = "",
             [1] = "ერთი",
@@ -21,7 +21,7 @@ namespace NumberToText.Core
             [9] = "ცხრა",
         };
 
-        private static readonly Dictionary<byte, string> prefixOnes = new Dictionary<byte, string>
+        private static readonly Dictionary<byte, string> PrefixOnes = new()
         {
             [1] = "ერთ",
             [2] = "ორ",
@@ -34,7 +34,7 @@ namespace NumberToText.Core
             [9] = "ცხრა",
         };
 
-        private static readonly Dictionary<byte, string> tens = new Dictionary<byte, string>
+        private static readonly Dictionary<byte, string> Tens = new()
         {
             [0] = "ათი",
             [1] = "თერთმეტი",
@@ -48,7 +48,7 @@ namespace NumberToText.Core
             [9] = "ცხრამეტი",
         };
 
-        private static readonly Dictionary<byte, string> prefixTwenties = new Dictionary<byte, string>
+        private static readonly Dictionary<byte, string> PrefixTwenties = new()
         {
             [0] = "",
             [2] = "ოც",
@@ -57,7 +57,7 @@ namespace NumberToText.Core
             [8] = "ოთხმოც",
         };
 
-        private static readonly Dictionary<byte, string> postfixTwenties = new Dictionary<byte, string>
+        private static readonly Dictionary<byte, string> PostfixTwenties = new()
         {
             [0] = "",
             [1] = "",
@@ -71,8 +71,7 @@ namespace NumberToText.Core
             [9] = "ოთხმოც",
         };
 
-        private static readonly string[] groupNames = new string[]
-        {
+        private static readonly string[] GroupNames = {
              " ათას ",
              " მილიონ ",
              " მილიარდ ",
@@ -106,7 +105,8 @@ namespace NumberToText.Core
 
         private static string Convert(string number)
         {
-            if (number.All(d => d == '0')) return "ნული";
+            if (number.All(d => d == '0'))
+                return "ნული";
 
             var numberGroups = number.Split(new[] { NumberFormatInfo.CurrentInfo.NumberGroupSeparator }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -126,7 +126,7 @@ namespace NumberToText.Core
                 {
                     if (numberNames[i - 1] == "")
                         continue;
-                    builder.Insert(0, groupNames[j]);
+                    builder.Insert(0, GroupNames[j]);
                 }
             }
             if (numberNames.Last() == "")
@@ -193,21 +193,21 @@ namespace NumberToText.Core
 
         private static string FindOne(byte first, byte second, byte third)
         {
-            if (first == 0 && second == 0) return postfixOnes[third];
-            return second.IsOdd() ? tens[third] : postfixOnes[third];
+            if (first == 0 && second == 0) return PostfixOnes[third];
+            return second.IsOdd() ? Tens[third] : PostfixOnes[third];
         }
 
         private static string FindTen(byte second, byte third)
         {
             if (second == 0) return "";
-            if (third == 0) return postfixTwenties[second];
-            return second.IsOdd() ? prefixTwenties[(byte)(second - 1)] : prefixTwenties[second];
+            if (third == 0) return PostfixTwenties[second];
+            return second.IsOdd() ? PrefixTwenties[(byte)(second - 1)] : PrefixTwenties[second];
         }
 
         private static string FindHundred(byte first)
         {
             if (first == 0) return "";
-            return prefixOnes[first];
+            return PrefixOnes[first];
         }
 
         public static byte ToByte(this char digit)
