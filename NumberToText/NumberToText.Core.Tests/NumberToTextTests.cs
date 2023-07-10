@@ -13,12 +13,14 @@ public class NumberToTextTests
         action.Should().ThrowExactly<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public void DecimalNumbers()
+    [Theory]
+    [InlineData(1234.37, "ერთი ათას ორას ოცდათოთხმეტი", "ოცდაჩვიდმეტი")]
+    [InlineData(12345.67, "თორმეტი ათას სამას ორმოცდახუთი", "სამოცდაშვიდი")]
+    public void DecimalNumbers(double number, string wholeText, string decimalText)
     {
-        var (whole, @decimal) = Convert(1234.37);
-        whole.Should().Be("ერთი ათას ორას ოცდათოთხმეტი");
-        @decimal.Should().Be("ოცდაჩვიდმეტი");
+        var (whole, @decimal) = Convert(number);
+        whole.Should().Be(wholeText);
+        @decimal.Should().Be(decimalText);
     }
 
     [Theory]
