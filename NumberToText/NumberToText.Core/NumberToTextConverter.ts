@@ -114,8 +114,9 @@
             }
         }
         if (numberNames[numberNames.length - 1] === "") {
+            builder.pop();  
             const lastIndex = builder.length-1;
-            builder[lastIndex] = builder[lastIndex].trim() + "ი";
+            builder[lastIndex] = builder[lastIndex].trimEnd() + "ი";
         }
 
         return builder.join("");
@@ -144,7 +145,7 @@
         builder.push(hundred === "" ? "" : "ას ");
         if (first > 0 && second === 0 && third === 0) {
           const lastIndex = builder.length-1;
-          builder[lastIndex] = builder[lastIndex].trim() + "ი";  
+          builder[lastIndex] = builder[lastIndex].trimEnd() + "ი";  
         } else {
             builder.push(ten);
             builder.push(ten === "" ? "" : one === "" ? "" : "და");
