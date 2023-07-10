@@ -67,23 +67,35 @@
             throw new Error("Unable to convert. Number was too big");
         }
 
-        const textNumber = number.toLocaleString();
+        const textNumber = number.toLocaleString('en-US', {
+            style: 'decimal',
+            minimumFractionDigits: 2,
+            useGrouping: true,
+            maximumFractionDigits: 10
+          });
 
         const decimalSeparator = ".";
         const numberParts = textNumber.split(decimalSeparator);
 
         const wholePart = NumberToTextConverter.convertNumber(numberParts[0]);
+        if(numberParts.length === 1)
+        {
+          numberParts.push('0');
+          console.log(numberParts);
+        }
+        console.log('Decimal Part: '+ numberParts[1]);
         const decimalPart = NumberToTextConverter.convertNumber(numberParts[1]);
-
+        
         return { wholePart, decimalPart };
     }
 
     private static convertNumber(number: string): string {
-        if (Number.parseInt(number) === 0) {
+          if (Number.parseInt(number) === 0) {
             return "ნული";
         }
 
         const groupSeparator = ",";
+        console.log('number: ' + number);
         const numberGroups = number.split(groupSeparator);
 
         return NumberToTextConverter.groupsToText(numberGroups);
