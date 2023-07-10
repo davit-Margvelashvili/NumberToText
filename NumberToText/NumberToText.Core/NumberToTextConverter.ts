@@ -81,9 +81,8 @@
         if(numberParts.length === 1)
         {
           numberParts.push('0');
-          console.log(numberParts);
         }
-        console.log('Decimal Part: '+ numberParts[1]);
+        
         const decimalPart = NumberToTextConverter.convertNumber(numberParts[1]);
         
         return { wholePart, decimalPart };
@@ -95,7 +94,6 @@
         }
 
         const groupSeparator = ",";
-        console.log('number: ' + number);
         const numberGroups = number.split(groupSeparator);
 
         return NumberToTextConverter.groupsToText(numberGroups);
@@ -116,8 +114,8 @@
             }
         }
         if (numberNames[numberNames.length - 1] === "") {
-            builder.pop();
-            builder.push("ი");
+            const lastIndex = builder.length-1;
+            builder[lastIndex] = builder[lastIndex].trim() + "ი";
         }
 
         return builder.join("");
@@ -145,8 +143,8 @@
         builder.push(hundred === "ერთ" ? "" : hundred);
         builder.push(hundred === "" ? "" : "ას ");
         if (first > 0 && second === 0 && third === 0) {
-            builder.pop();
-            builder.push("ი");
+          const lastIndex = builder.length-1;
+          builder[lastIndex] = builder[lastIndex].trim() + "ი";  
         } else {
             builder.push(ten);
             builder.push(ten === "" ? "" : one === "" ? "" : "და");
@@ -207,3 +205,9 @@
         return NumberToTextConverter.prefixOnes[first];
     }
 }
+
+function GEL(n: number): string {
+    const result = NumberToTextConverter.convert(n);
+    return `${result.wholePart} ლარი და ${result.decimalPart} თეთრი`;
+  }
+
